@@ -322,6 +322,8 @@ const isSelectedFilter = (filterValue: FilterValue, url: URL) => {
 
 export const toFilter = (filter: FilterShopify, url: URL): Filter => {
   if (!filter.type.includes("RANGE")) {
+    const isColorFilter = filter.id === "filter.v.t.shopify.color-pattern";
+
     return {
       "@type": "FilterToggle",
       label: filter.label,
@@ -330,7 +332,9 @@ export const toFilter = (filter: FilterShopify, url: URL): Filter => {
         return {
           quantity: value.count,
           label: value.label,
-          value: value.label,
+          value: !isColorFilter
+            ? value.label
+            : JSON.parse(value.input).taxonomyMetafield.value,
           selected: isSelectedFilter(value, url),
           url: filtersURL(filter, value, url),
         };
